@@ -1,0 +1,15 @@
+{% for property in item.properties %}
+  {% if property.first == 'Front'
+     or property.first == 'Back'
+     or property.first == 'Left'
+     or property.first == 'Right' %}
+
+    <p class="custom-design-link">
+      <strong>{{ property.first }}:</strong>
+      <a href="{{ property.last }}" target="_blank" rel="noopener">
+        View Design
+      </a>
+    </p>
+
+  {% endif %}
+{% endfor %}

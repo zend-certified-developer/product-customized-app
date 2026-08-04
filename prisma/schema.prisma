@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+model CustomizableProduct {
+  id Int @id @default(autoincrement())
+
+  productId String @unique
+
+  title String
+  price String
+  image String
+
+variantData String?
+
+  enabled Boolean @default(true)
+
+  createdAt DateTime @default(now())
+}
+model ProductColor {
+  id Int @id @default(autoincrement())
+
+  productId String
+  variantId String @unique
+
+  colorName String
+  colorCode String
+
+  frontEnabled Boolean @default(true)
+  backEnabled Boolean @default(true)
+  leftEnabled Boolean @default(false)
+  rightEnabled Boolean @default(false)
+
+  frontImage String?
+  backImage String?
+  leftImage String?
+  rightImage String?
+
+    frontX Int @default(170)
+  frontY Int @default(140)
+  frontWidth Int @default(160)
+  frontHeight Int @default(180)
+
+  backX Int @default(170)
+  backY Int @default(140)
+  backWidth Int @default(160)
+  backHeight Int @default(180)
+
+  leftX Int @default(170)
+  leftY Int @default(140)
+  leftWidth Int @default(160)
+  leftHeight Int @default(180)
+
+  rightX Int @default(170)
+  rightY Int @default(140)
+  rightWidth Int @default(160)
+  rightHeight Int @default(180)
+
+  createdAt DateTime @default(now())
+}
+model AppSettings {
+  id         Int      @id @default(autoincrement())
+  shop       String   @unique
+  appEnabled Boolean  @default(true)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model CustomOrder {
+  id             Int      @id @default(autoincrement())
+
+  shopifyOrderId String   @unique
+  orderName      String
+
+  customerName   String?
+
+  createdAt      DateTime
+
+  items          CustomOrderItem[]
+}
+
+model CustomOrderItem {
+  id Int @id @default(autoincrement())
+
+  orderId Int
+  order CustomOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productTitle String
+  variantTitle String
+
+  quantity Int
+
+  frontImage String?
+  backImage String?
+  leftImage String?
+  rightImage String?
+}
