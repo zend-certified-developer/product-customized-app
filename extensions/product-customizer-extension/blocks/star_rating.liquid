@@ -75,10 +75,6 @@ data-variant-id="{{ product.selected_or_first_available_variant.id }}"
 </div>
 
 <script>
-const APP_URL =
-  "https://explicitly-marking-newsletters-medal.trycloudflare.com";
-</script>
-<script>
 (async function () {
   const productId = "{{ product.id }}";
 
@@ -123,8 +119,7 @@ if (e.target.id === "open-customizer") {
   document.getElementById(
     "designer-frame"
   ).src =
-    APP_URL +
-    "/designer?productId=" +
+    "/apps/customizer/designer?productId=" +
     productId +
     "&variantId=" +
     variantId +
