@@ -3,19 +3,17 @@ import prisma from "../db.server";
 export async function loader({ request }) {
   const url = new URL(request.url);
 
-  const productId =
-    url.searchParams.get("productId");
+  const productId = url.searchParams.get("productId");
+  const shop = url.searchParams.get("shop");
 
-  const shop =
-    url.searchParams.get("shop");
   console.log("SHOP =", shop);
+  console.log("Incoming productId =", productId);
 
-  const settings =
-    await prisma.appSettings.findUnique({
-      where: {
-        shop,
-      },
-    });
+  const settings = await prisma.appSettings.findUnique({
+    where: {
+      shop,
+    },
+  });
 
   console.log("SETTINGS =", settings);
 
@@ -25,13 +23,17 @@ export async function loader({ request }) {
     });
   }
 
-  const product =
-    await prisma.customizableProduct.findFirst({
-      where: {
-        productId: `gid://shopify/Product/${productId}`,
-      },
-    });
-  console.log("PRODUCT =", product);
+  const searchId = `gid://shopify/Product/${productId}`;
+  console.log("Searching =", searchId);
+
+  const product = await prisma.customizableProduct.findFirst({
+    where: {
+      productId: searchId,
+    },
+  });
+
+  console.log("DB Result =", product);
+
   return new Response(
     JSON.stringify({
       customizable: !!product,
