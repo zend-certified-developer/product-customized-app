@@ -375,55 +375,6 @@ const images =
   (t) => t.id === selectedTextId
 );
 
-//   const uploadSingleView = async (
-//   side
-// ) => {
-//   setCaptureView(side);
-
-//   await new Promise((r) =>
-//     setTimeout(r, 150)
-//   );
-
-//   const canvas =
-//     await html2canvas(
-//       tshirtRef.current,
-//       {
-//         backgroundColor: null,
-//         useCORS: true,
-//         scale: 2,
-//       }
-//     );
-
-//   const image =
-//     canvas.toDataURL("image/png");
-
-//   const formData =
-//     new FormData();
-
-//   formData.append(
-//     "file",
-//     image
-//   );
-
-//   formData.append(
-//     "upload_preset",
-//     "designer"
-//   );
-
-//   const response =
-//     await fetch(
-//       "https://api.cloudinary.com/v1_1/fuyksn9p/image/upload",
-//       {
-//         method: "POST",
-//         body: formData,
-//       }
-//     );
-
-//   const data =
-//     await response.json();
-
-//   return data.secure_url;
-// };
 const uploadSingleView = async (side) => {
   console.log("Started:", side);
 
