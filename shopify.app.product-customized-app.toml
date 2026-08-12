@@ -51,9 +51,9 @@ redirect_urls = [
 ]
 
 [app_proxy]
-url = "https://product-customized-app.onrender.com"
+url = "https://product-customized-app.onrender.com/apps/customizer"
 subpath = "customizer"
 prefix = "apps"
 
 [build]
-automatically_update_urls_on_dev = true
+automatically_update_urls_on_dev = false
