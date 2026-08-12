@@ -90,17 +90,29 @@ export default function DesignerClient({
   const [productColors, setProductColors] =
     useState([]);
 useEffect(() => {
-  if (!productId) return;
+  if (!productId) {
+    console.log("NO PRODUCT ID:", productId);
+    return;
+  }
 
   fetch(
-    `/api/product?productId=${productId}`
+    `/apps/customizer/api/product?productId=${productId}`
   )
-    .then((res) => res.json())
+    .then(async (res) => {
+      console.log("PRODUCT API STATUS:", res.status);
+
+      const data = await res.json();
+
+      console.log("PRODUCT API DATA:", data);
+
+      return data;
+    })
     .then((data) => {
       setProductData(data.product);
       setProductColors(data.colors);
-
-      console.log(data.colors);
+    })
+    .catch((err) => {
+      console.error("PRODUCT API ERROR:", err);
     });
 }, [productId]);
   const [view, setView] = useState("front");
