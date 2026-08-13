@@ -37,6 +37,9 @@ if (host === "localhost") {
 }
 
 export default defineConfig({
+    base: process.env.SHOPIFY_APP_URL
+    ? `${process.env.SHOPIFY_APP_URL}/`
+    : "/",
   server: {
     allowedHosts: [host],
     cors: {
