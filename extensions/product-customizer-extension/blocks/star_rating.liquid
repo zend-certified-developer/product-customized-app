@@ -116,17 +116,9 @@ if (e.target.id === "open-customizer") {
   console.log("Product ID:", productId);
   console.log("Variant ID:", variantId);
 
-  document.getElementById(
-    "designer-frame"
-  ).src =
-    "/apps/customizer/designer?productId=" +
-    productId +
-    "&variantId=" +
-    variantId +
-    "&shopUrl=" +
-    encodeURIComponent(
-      window.location.origin
-    );
+ 
+
+    document.getElementById("designer-frame").src = "https://product-customized-app.onrender.com/designer?productId=" + productId + "&variantId=" + variantId + "&shopUrl=" + encodeURIComponent(window.location.origin);
 
   document.getElementById(
     "customizer-modal"
