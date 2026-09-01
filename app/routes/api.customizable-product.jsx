@@ -8,6 +8,12 @@ export async function loader({ request }) {
 
   console.log("SHOP =", shop);
   console.log("Incoming productId =", productId);
+  if (!shop) {
+  return Response.json(
+    { customizable: false, error: "Missing shop parameter" },
+    { status: 400 }
+  );
+}
 
   const settings = await prisma.appSettings.findUnique({
     where: {
