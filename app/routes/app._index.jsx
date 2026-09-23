@@ -106,10 +106,10 @@ export default function Index() {
   <h2>Add the Customizer Button to Your Storefront</h2>
 
   <p>
-    For the "Customize Product" button to appear on your product
-    pages, you need to add the app block to your theme once:
+    Setting up the customizer takes two steps:
   </p>
 
+  <h3>Step 1: Add the app block to your theme (once)</h3>
   <ol>
     <li>Go to <strong>Online Store → Themes</strong> in your Shopify admin.</li>
     <li>Click <strong>Customize</strong> on your live theme.</li>
@@ -119,9 +119,16 @@ export default function Index() {
     <li>Click <strong>Save</strong> in the top right corner.</li>
   </ol>
 
+  <h3>Step 2: Choose which products can be customized</h3>
+  <ol>
+    <li>Go to <Link to="/app/products">Products Page</Link> in this app.</li>
+    <li>Select the product(s) you want customers to be able to customize.</li>
+    <li>Then by help of 'Edit' button on product you can configure design areas(like front,back.etc) and image accordingly for each product.</li>
+  </ol>
+
   <p>
-    Once added, the "Customize Product" button will automatically
-    show up on any product you've enabled for customization above.
+    The "Customize Product" button will only appear on the storefront
+    for products you've enabled in Step 2.
   </p>
 </div>
       <div className="features">
