@@ -23,11 +23,14 @@ export async function loader({ request }) {
 
   console.log("SETTINGS =", settings);
 
-  if (!settings?.appEnabled) {
-    return Response.json({
-      customizable: false,
-    });
-  }
+  // if (!settings?.appEnabled) {
+  //   return Response.json({
+  //     customizable: false,
+  //   });
+  // }
+  if (settings && settings.appEnabled === false) {
+  return Response.json({ customizable: false });
+}
 
   const searchId = `gid://shopify/Product/${productId}`;
   console.log("Searching =", searchId);

@@ -6,122 +6,97 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import { useNavigate } from "react-router";
 import "../dashboard.css";
 
-export async function loader({ request }) {
-  await authenticate.admin(request);
+// export async function loader({ request }) {
+//   await authenticate.admin(request);
 
- const products =
-  await prisma.customizableProduct.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
+//  const products =
+//   await prisma.customizableProduct.findMany({
+//     orderBy: {
+//       createdAt: "desc",
+//     },
+//   });
+
+// return {
+//   products,
+// };
+// }
+export async function loader({ request }) {
+  const { session } = await authenticate.admin(request);
+
+  const products = await prisma.customizableProduct.findMany({
+    where: { shop: session.shop },
+    orderBy: { createdAt: "desc" },
   });
 
-return {
-  products,
-};
+  return { products };
 }
-
 export async function action({ request }) {
-  await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const shop = session.shop;
 
-  const formData =
-    await request.formData();
+  const formData = await request.formData();
 
-  const productsData =
-    formData.get("products");
-
-   
-  const settingsData =
-    formData.get("settings");
-    const deleteProductId =
-  formData.get("deleteProductId");
+  const productsData = formData.get("products");
+  const settingsData = formData.get("settings");
+  const deleteProductId = formData.get("deleteProductId");
 
   if (productsData) {
-    const products =
-      JSON.parse(productsData);
+    const products = JSON.parse(productsData);
 
     for (const product of products) {
+      
+      const existing = await prisma.customizableProduct.findUnique({
+        where: { productId: product.id },
+      });
+      if (existing && existing.shop && existing.shop !== shop) continue;
+
       await prisma.customizableProduct.upsert({
-        where: {
-          productId: product.id,
-        },
+        where: { productId: product.id },
 
         update: {
+          shop,
           title: product.title,
-
-          image:
-            product.images?.[0]
-              ?.originalSrc || "",
-
-          price:
-            product.variants?.[0]
-              ?.price || "",
-                variantData: JSON.stringify(
-    product.variants
-  ),
+          image: product.images?.[0]?.originalSrc || "",
+          price: product.variants?.[0]?.price || "",
+          variantData: JSON.stringify(product.variants),
         },
 
         create: {
+          shop,
           productId: product.id,
-
           title: product.title,
-
-          image:
-            product.images?.[0]
-              ?.originalSrc || "",
-
-          price:
-            product.variants?.[0]
-              ?.price || "",
-                variantData: JSON.stringify(
-    product.variants
-  ),
+          image: product.images?.[0]?.originalSrc || "",
+          price: product.variants?.[0]?.price || "",
+          variantData: JSON.stringify(product.variants),
         },
       });
     }
   }
 
   if (settingsData) {
-    const settings =
-      JSON.parse(settingsData);
+    const settings = JSON.parse(settingsData);
 
     for (const productId in settings) {
-      await prisma.customizableProduct.update({
-        where: {
-          productId,
-        },
-
-        data: {
-          enabled:
-            settings[productId]
-              ?.enabled,
-   
-        },
-        
+      await prisma.customizableProduct.updateMany({
+        where: { productId, shop },
+        data: { enabled: settings[productId]?.enabled },
       });
     }
   }
 
-if (deleteProductId) {
-  await prisma.productColor.deleteMany({
-    where: {
-      productId: deleteProductId,
-    },
-  });
+  if (deleteProductId) {
+    await prisma.productColor.deleteMany({
+      where: { productId: deleteProductId, shop },
+    });
 
-  await prisma.customizableProduct.delete({
-    where: {
-      productId: deleteProductId,
-    },
-  });
+    await prisma.customizableProduct.deleteMany({
+      where: { productId: deleteProductId, shop },
+    });
 
-  return {
-    deleted: true,
-  };
-}
-  return {
-  saved: true,
-};
+    return { deleted: true };
+  }
+
+  return { saved: true };
 }
 
 export default function Products() {

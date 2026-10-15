@@ -35,7 +35,7 @@ model Session {
 
 model CustomizableProduct {
   id Int @id @default(autoincrement())
-
+   shop String @default("")
   productId String @unique
 
   title String
@@ -47,6 +47,7 @@ variantData String?
   enabled Boolean @default(true)
 
   createdAt DateTime @default(now())
+   @@index([shop])
 }
 model ProductColor {
   id Int @id @default(autoincrement())

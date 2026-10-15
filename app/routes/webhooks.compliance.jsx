@@ -16,6 +16,8 @@ export const action = async ({ request }) => {
     case "shop/redact":
       await db.session.deleteMany({ where: { shop } });
       await db.appSettings.deleteMany({ where: { shop } });
+      await db.customizableProduct.deleteMany({ where: { shop } });
+await db.productColor.deleteMany({ where: { shop } });
       break;
   }
 

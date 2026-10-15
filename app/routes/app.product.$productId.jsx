@@ -1,45 +1,34 @@
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 import { Stage, Layer, Rect, Transformer  } from "react-konva";
-import { useLoaderData, useFetcher } from "react-router";
+import { useLoaderData, useFetcher, redirect } from "react-router";
 import { useState, useEffect, useRef } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import "../dashboard.css";
 
 export async function loader({ request, params }) {
-  await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const shop = session.shop;
 
-  const productId =
-    `gid://shopify/Product/${params.productId}`;
+  const productId = `gid://shopify/Product/${params.productId}`;
 
-  const product =
-    await prisma.customizableProduct.findUnique({
-      where: {
-        productId,
-      },
-    });
+  const product = await prisma.customizableProduct.findFirst({
+    where: { productId, shop },
+  });
+  if (!product) throw redirect("/app/products");
 
-  const productColors =
-    await prisma.productColor.findMany({
-      where: {
-        productId,
-      },
-    });
-console.log("PRODUCT COLORS");
-console.log(JSON.stringify(productColors, null, 2));
-  const variants = JSON.parse(
-  product.variantData || "[]"
-);
+  const productColors = await prisma.productColor.findMany({
+    where: { productId, shop },
+  });
 
-return {
-  product,
-  productColors,
-  variants,
-};
+  const variants = JSON.parse(product.variantData || "[]");
+
+  return { product, productColors, variants };
 }
 
 export async function action({ request }) {
-  await authenticate.admin(request);
+ const { session } = await authenticate.admin(request);
+const shop = session.shop;
 
   const formData = await request.formData();
 
@@ -47,10 +36,16 @@ export async function action({ request }) {
 
   if (colorData) {
     const colors = JSON.parse(colorData);
+    const owned = await prisma.customizableProduct.findMany({
+  where: { shop },
+  select: { productId: true },
+});
+const ownedIds = new Set(owned.map((p) => p.productId));
 
      console.log("========== COLORS RECEIVED ==========");
   console.log(JSON.stringify(colors, null, 2));
     for (const color of colors) {
+      if (!ownedIds.has(color.productId)) continue;
         
        console.log("Saving variant:", color.variantId);
   
@@ -59,6 +54,7 @@ const result = await prisma.productColor.upsert({
         variantId: color.variantId,
       },
         update: {
+          shop,
           colorName: color.colorName,
           colorCode: color.colorCode,
 
@@ -93,7 +89,7 @@ const result = await prisma.productColor.upsert({
           rightHeight: color.rightHeight,
         },
 
-        create: color,
+        create: { ...color, shop },
       });
        console.log("Saved Result:");
     console.log(result);

@@ -10,7 +10,7 @@ export const loader = async ({ request }) => {
     await authenticate.admin(request);
 
   const products =
-    await prisma.customizableProduct.findMany();
+    await prisma.customizableProduct.findMany({ where: { shop: session.shop } });
 
   const settings =
     await prisma.appSettings.findUnique({
