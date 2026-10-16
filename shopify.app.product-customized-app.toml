@@ -6,7 +6,7 @@ application_url = "https://product-customized-app.onrender.com"
 embedded = true
 
 [access_scopes]
-scopes = "write_products,write_metaobjects,write_metaobject_definitions,read_orders"
+scopes = "write_products,write_metaobjects,write_metaobject_definitions"
 
 [product.metafields.app.demo_info]
 type = "single_line_text_field"
