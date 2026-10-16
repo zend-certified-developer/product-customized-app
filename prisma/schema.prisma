@@ -51,7 +51,7 @@ variantData String?
 }
 model ProductColor {
   id Int @id @default(autoincrement())
-
+shop String @default("")
   productId String
   variantId String @unique
 
@@ -89,6 +89,7 @@ model ProductColor {
   rightHeight Int @default(180)
 
   createdAt DateTime @default(now())
+   @@index([shop])
 }
 model AppSettings {
   id         Int      @id @default(autoincrement())
